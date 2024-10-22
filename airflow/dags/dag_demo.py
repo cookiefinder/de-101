@@ -1,15 +1,15 @@
+import requests
 import io
 import zipfile
-
 import pandas
 import pendulum
-import requests
 from airflow.decorators import task, dag
 from pyspark.sql import functions, SparkSession
 from pyspark.sql.functions import year, udf
 from pyspark.sql.types import StringType
 
-API = "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2023.zip"
+# API = "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2023.zip"
+API = "https://github.com/cookiefinder/de-101/raw/refs/heads/main/data_Q3_2023.zip"
 base = "./airflow/files"
 
 url = 'jdbc:mysql://localhost:13306/pyspark?characterEncoding=UTF-8'

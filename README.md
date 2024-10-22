@@ -55,4 +55,3 @@ java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
 ```
 add mysql jar in my-venv/lib/python3.9/site-packages/pyspark/jars directory
 ```
-
