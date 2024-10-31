@@ -44,14 +44,19 @@ Exit python venv with the `deactivate` command
 
 ## TroubleShooting
 
-SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC
+1. SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC
 
 ```shell
 pip3 install urllib3 --upgrade
 ```
 
-java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+2. java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
 
+add mysql jar to `my-venv/lib/python3.9/site-packages/pyspark/jars` directory
+
+3. can't call API by `requests`
+
+```python
+os.environ["no_proxy"] = "*"
 ```
-add mysql jar in my-venv/lib/python3.9/site-packages/pyspark/jars directory
-```
+
