@@ -1,8 +1,9 @@
-import requests
 import io
 import zipfile
+
 import pandas
 import pendulum
+import requests
 from airflow.decorators import task, dag
 from pyspark.sql import functions, SparkSession
 from pyspark.sql.functions import year, udf
@@ -44,23 +45,23 @@ def get_brand(model):
 )
 def etl():
     spark = SparkSession.builder.appName("dag_demo").getOrCreate()
+    path = base + '/data_Q3_2023'
 
-    @task
+    @task.bash
     def extract():
         res = requests.get(API)
         zip_file = zipfile.ZipFile(io.BytesIO(res.content))
         zip_file.extractall(base)
-        return base + '/data_Q3_2023'
 
     @task
-    def transfer1(_path: str):
-        data = spark.read.csv(_path, header=True, inferSchema=True)
+    def transfer1():
+        data = spark.read.csv(path, header=True, inferSchema=True)
         data = data.groupBy("date").agg(functions.count("*").alias("count"), functions.sum("failure").alias("failures"))
         return data.toPandas().to_json()
 
     @task
-    def transfer2(_path: str):
-        data = spark.read.csv(_path, header=True, inferSchema=True)
+    def transfer2():
+        data = spark.read.csv(path, header=True, inferSchema=True)
         data = (data.groupBy(year("date").alias("year"), get_brand("model").alias("brand"))
                 .agg(functions.sum("failure").alias("failures")))
         return data.toPandas().to_json()
@@ -70,9 +71,9 @@ def etl():
         data = spark.createDataFrame(pandas.read_json(json_data))
         data.write.jdbc(url, _tbl_name, mode, prop)
 
-    _path = extract()
-    load(transfer1(_path), 'data_Q3_2023')
-    load(transfer2(_path), 'data_Q3_2023_2')
+    extract()
+    load(transfer1(), 'data_Q3_2023')
+    load(transfer2(), 'data_Q3_2023_2')
 
 
 try:
